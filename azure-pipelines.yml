@@ -12,19 +12,18 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  SONAR_TOKEN: $(SONAR_TOKEN)  # Define esto como variable secreta en Azure DevOps
-
+  SONAR_TOKEN: $(SONAR_TOKEN)
 steps:
 
 # 🔍 Paso 1: SonarCloud - Preparar análisis
 - task: SonarCloudPrepare@1
   inputs:
-    SonarCloud: 'SonarCloud Connection'  # Nombre del servicio conectado
-    organization: 'tu-organizacion'      # Nombre en SonarCloud
+    SonarCloud: 'SonarQube Service'
+    organization: 'semillero'
     scannerMode: 'CLI'
     configMode: 'manual'
-    cliProjectKey: 'tu-proyecto'
-    cliProjectName: 'tu-proyecto'
+    cliProjectKey: 'proyecto_semillero'
+    cliProjectName: 'Proyecto semillero'
     cliSources: '.'
 
 # 🔍 Paso 2: SonarCloud - Ejecutar análisis
