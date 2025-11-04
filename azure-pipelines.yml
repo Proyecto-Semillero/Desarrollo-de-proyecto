@@ -1,19 +1,42 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
+
+variables:
+  SONAR_TOKEN: $(SONAR_TOKEN)  # Define esto como variable secreta en Azure DevOps
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
 
+# 🔍 Paso 1: SonarCloud - Preparar análisis
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'SonarCloud Connection'  # Nombre del servicio conectado
+    organization: 'tu-organizacion'      # Nombre en SonarCloud
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'tu-proyecto'
+    cliProjectName: 'tu-proyecto'
+    cliSources: '.'
+
+# 🔍 Paso 2: SonarCloud - Ejecutar análisis
+- task: SonarCloudAnalyze@1
+
+# 🔍 Paso 3: SonarCloud - Publicar resultados
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
+
+# 🧪 Paso 4: Pruebas unitarias (ejemplo con Node.js + Jest)
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    npm install
+    npm test
+  displayName: 'Ejecutar pruebas unitarias con Jest'
